@@ -118,18 +118,16 @@ as generic HTTP 500 responses.
 
 ## Verification
 
-Manually verified against Azurite:
-- Project builds without warnings or errors.
+Manually verified against hosted Azure Table Storage:
+
 - Valid POST returns 201 with a generated ID.
-- Blank name and negative quantity return 400 with both errors.
-- Malformed JSON returns 400.
-- GET returns 200 with the previously created product.
+- GET returns 200 with the same saved product.
+- The saved product was confirmed in the Azure portal.
+- The Function runs locally during these checks.
 
-These are manual checks; automated tests have not been added.
+## Scope and limitationsons
 
-## Scope and limitations
-
-- Tested locally with Azurite; not yet verified against a hosted
+- Tested with both local Azurite and hosted Azure Table Storage.
   Azure Table Storage account.
 - No Azure Functions deployment.
 - Endpoints use anonymous authorization for the local exercise.
