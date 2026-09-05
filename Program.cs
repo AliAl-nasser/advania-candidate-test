@@ -1,3 +1,5 @@
+using Advania.CandidateTest.Repositories;
+using Azure.Data.Tables;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
@@ -10,7 +12,21 @@ var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
-if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")))
+var storageConnectionString = builder.Configuration["AzureWebJobsStorage"];
+
+if (string.IsNullOrWhiteSpace(storageConnectionString))
+{
+    throw new InvalidOperationException(
+        "AzureWebJobsStorage configuration is missing.");
+}
+
+builder.Services.AddSingleton(
+    new TableClient(storageConnectionString, "Products"));
+
+builder.Services.AddSingleton<ProductRepository>();
+
+if (!string.IsNullOrEmpty(
+    Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")))
 {
     builder.Services.AddOpenTelemetry()
         .UseFunctionsWorkerDefaults()
